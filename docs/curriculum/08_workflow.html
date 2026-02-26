@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8강: Workflow 완성 — AI PO Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sidebar-w: 260px;
+      --color-bg: #f8f9fb;
+      --color-surface: #ffffff;
+      --color-border: #e5e7eb;
+      --color-primary: #4f46e5;
+      --color-primary-light: #eef2ff;
+      --color-text: #1f2937;
+      --color-muted: #6b7280;
+      --color-code-bg: #f3f4f6;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .sidebar-brand a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: .9rem;
+      line-height: 1.4;
+    }
+    .sidebar-brand span {
+      display: block;
+      font-size: .72rem;
+      color: var(--color-muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    .sidebar nav { padding: 12px 0 24px; }
+    .sidebar nav ul { list-style: none; }
+    .nav-section {
+      padding: 16px 20px 4px;
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--color-muted);
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: .83rem;
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: 0;
+      transition: background .15s, color .15s;
+      border-left: 3px solid transparent;
+    }
+    .nav-link:hover { background: var(--color-primary-light); color: var(--color-primary); }
+    .nav-link.active {
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      border-left-color: var(--color-primary);
+      font-weight: 600;
+    }
+    .nav-icon { font-size: .9rem; flex-shrink: 0; width: 20px; text-align: center; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-width: 0;
+      padding: 40px 48px;
+      max-width: calc(860px + var(--sidebar-w));
+    }
+
+    /* ── Markdown Content ── */
+    .prose { max-width: 760px; }
+    .prose h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+    .prose h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-top: 40px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-border);
+      color: var(--color-text);
+    }
+    .prose h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--color-text);
+    }
+    .prose h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    .prose p { margin-bottom: 14px; }
+    .prose ul, .prose ol {
+      margin-bottom: 14px;
+      padding-left: 24px;
+    }
+    .prose li { margin-bottom: 5px; }
+    .prose li > ul, .prose li > ol { margin-top: 5px; margin-bottom: 5px; }
+
+    .prose strong { font-weight: 600; }
+    .prose em { font-style: italic; }
+
+    .prose a {
+      color: var(--color-primary);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(79,70,229,.3);
+      transition: border-color .15s;
+    }
+    .prose a:hover { border-bottom-color: var(--color-primary); }
+
+    .prose blockquote {
+      margin: 20px 0;
+      padding: 12px 18px;
+      background: var(--color-primary-light);
+      border-left: 4px solid var(--color-primary);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: #3730a3;
+    }
+    .prose blockquote p { margin-bottom: 0; }
+
+    .prose hr {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 32px 0;
+    }
+
+    /* Tables */
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: .88rem;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .prose thead tr { background: var(--color-primary); color: #fff; }
+    .prose th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .prose td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prose tbody tr:last-child td { border-bottom: none; }
+    .prose tbody tr:hover { background: var(--color-primary-light); }
+
+    /* Code */
+    .prose code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: .82em;
+      background: var(--color-code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #b91c1c;
+    }
+    .prose pre {
+      margin: 18px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .prose pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+      font-size: .83rem;
+      line-height: 1.6;
+    }
+    .prose pre > code.hljs { padding: 20px 24px; border-radius: var(--radius); }
+
+    /* Checkboxes in lists */
+    .prose input[type="checkbox"] {
+      margin-right: 6px;
+      accent-color: var(--color-primary);
+    }
+
+    /* ── Mobile ── */
+    .menu-btn {
+      display: none;
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 200;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      width: 40px; height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(79,70,229,.4);
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 99;
+    }
+    @media (max-width: 768px) {
+      .menu-btn { display: flex; }
+      .sidebar { transform: translateX(-100%); transition: transform .25s; }
+      .sidebar.open { transform: none; }
+      .sidebar-overlay.open { display: block; }
+      .main { margin-left: 0; padding: 20px 18px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">☰</button>
+<div class="sidebar-overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <a href="../index.html">📚 AI PO Study<span>초보 PO를 위한 Claude 활용 커리큘럼</span></a>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="../index.html" class="nav-link"><span class="nav-icon">🏠</span>홈</a></li>
+<li><a href="index.html" class="nav-link"><span class="nav-icon">📖</span>커리큘럼 목차</a></li>
+<li><a href="01_mindset.html" class="nav-link"><span class="nav-icon">💡</span>1강 — 마인드셋</a></li>
+<li><a href="02_prompting.html" class="nav-link"><span class="nav-icon">✏️</span>2강 — 기초 프롬프팅</a></li>
+<li><a href="03_soul_document.html" class="nav-link"><span class="nav-icon">📄</span>3강 — Soul Document</a></li>
+<li><a href="04_prd_writing.html" class="nav-link"><span class="nav-icon">📝</span>4강 — PRD 작성</a></li>
+<li><a href="05_context.html" class="nav-link"><span class="nav-icon">🧩</span>5강 — 컨텍스트 쌓기</a></li>
+<li><a href="06_commands.html" class="nav-link"><span class="nav-icon">⚡</span>6강 — 반복 업무 자동화</a></li>
+<li><a href="07_agentic.html" class="nav-link"><span class="nav-icon">🤖</span>7강 — Agentic Workflow</a></li>
+<li><a href="08_workflow.html" class="nav-link active"><span class="nav-icon">🏆</span>8강 — Workflow 완성</a></li>
+<li><a href="appendix_prompts.html" class="nav-link"><span class="nav-icon">📋</span>부록 — 프롬프트 모음</a></li>
+<li class="nav-section">─── 템플릿</li>
+<li><a href="templates/CLAUDE_md_template.html" class="nav-link"><span class="nav-icon">🗂️</span>CLAUDE.md 템플릿</a></li>
+<li><a href="templates/PRD_template.html" class="nav-link"><span class="nav-icon">📃</span>PRD 템플릿</a></li>
+<li><a href="templates/PROGRESS_md_template.html" class="nav-link"><span class="nav-icon">📊</span>PROGRESS.md 템플릿</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<main class="main">
+  <article class="prose" id="content"></article>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  // Configure marked
+  marked.setOptions({
+    breaks: true,
+    gfm: true,
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    }
+  });
+
+  const md = `# 8강: 내 Workflow 완성하기
+## — 종합 실습
+
+> **소요시간**: 60분  
+> **이 강의를 마치면**: 1~7강의 모든 내용을 통합한 나만의 PO-Claude Workflow를 갖추고, 실제 PRD 1개를 완성할 수 있다
+
+---
+
+## 여기까지 온 당신에게
+
+1강부터 7강까지 배운 것들을 돌아봅시다.
+
+| 강의 | 배운 것 | 실무에서 쓰는 장면 |
+|------|--------|-----------------|
+| 1강 | AI와의 올바른 관계 | 매번 대화 시작 전 자세 잡기 |
+| 2강 | 프롬프팅 5패턴 | 어떤 작업이든 이 패턴으로 시작 |
+| 3강 | Soul Document | 프로젝트 폴더마다 CLAUDE.md 유지 |
+| 4강 | PRD 5단계 플로우 | 새 기능 기획할 때마다 |
+| 5강 | 컨텍스트 쌓기 | 복잡한 작업 시작 전 20분 투자 |
+| 6강 | Command 자동화 | 반복 업무가 생길 때마다 Command 추가 |
+| 7강 | Agentic Workflow | 중요한 기획은 에이전트 4단계로 |
+
+이제 이 모든 것을 **하나의 일관된 Workflow**로 묶을 차례입니다.
+
+---
+
+## 나만의 PO-Claude Workflow 설계
+
+### Workflow 전체 지도
+
+\`\`\`
+📌 새 프로젝트/기능 기획 시작
+│
+├─ [준비] Soul Document 확인 & 업데이트
+│         PROGRESS.md 생성
+│
+├─ [탐색] 에이전트 1: UX 리서처 역할로 배경 조사
+│         ↓ 20분 컨텍스트 쌓기 대화
+│
+├─ [기획] 에이전트 2: PRD 초안 작성
+│         (4강 5단계 플로우 적용)
+│
+├─ [검토] 에이전트 3: 다각도 비판 검토
+│         개발자 / 사용자 / 비즈니스 관점
+│
+├─ [완성] 에이전트 4: 피드백 반영 최종본
+│
+└─ [공유] 팀 공유 전 내 최종 검토
+          → Slack / Notion / Jira에 업로드
+
+📌 반복 업무 (Command 사용)
+│
+├─ /sprint-review    → 매 스프린트 종료 시
+├─ /feature-analysis → 기능 요청 들어올 때
+├─ /prd-draft        → 빠른 초안 필요할 때
+└─ 기타 나만의 Command들
+
+📌 주기적 관리
+│
+├─ Soul Document 업데이트 (월 1회)
+└─ Command 개선 (분기 1회)
+\`\`\`
+
+---
+
+## 실전 워크플로우 시나리오
+
+### 상황: 월요일 아침, 새 기능 기획 요청이 들어왔다
+
+> "이번 스프린트에 '찜하기 기능 개선'을 추가해주세요.  
+>  사용자들이 찜한 상품이 품절됐을 때 재입고 알림을 받고 싶어한다는 피드백이 많습니다."
+
+---
+
+#### 월요일 오전 (30분): 준비 & 탐색
+
+**Step 1: Soul Document 확인**
+\`\`\`
+현재 CLAUDE.md를 열어서 확인:
+- 현재 스프린트 목표가 맞게 기재되어 있는지
+- 이번 분기 KPI가 업데이트되어 있는지
+- 필요하면 수정 후 저장
+\`\`\`
+
+**Step 2: PROGRESS.md 생성**
+\`\`\`
+# 찜하기 재입고 알림 기능 PRD
+
+## 목표
+Q1 전환율 목표 달성을 위한 재방문 유도 기능
+
+## 요청 배경
+사용자 피드백 다수 → 찜한 상품 품절 후 재입고 알림 필요
+
+## 진행 상황
+- [ ] 탐색
+- [ ] PRD 초안
+- [ ] 검토
+- [ ] 최종 완성
+\`\`\`
+
+**Step 3: 탐색 에이전트 실행**
+\`\`\`
+찜하기 기능에서 재입고 알림 기능을 추가하려 해.
+UX 리서처 관점에서 탐색해주세요:
+
+1. 커머스에서 재입고 알림의 일반적인 구현 방식
+2. 사용자가 기대하는 알림 경험 (언제, 어떻게, 얼마나 자주)
+3. 이 기능이 전환율에 미치는 영향 (알려진 데이터가 있으면)
+4. 기획 시 놓치기 쉬운 케이스들
+
+[CLAUDE.md 내용 붙여넣기]
+\`\`\`
+
+---
+
+#### 월요일 오전 (20분): PRD 초안
+
+**Step 4: 초안 에이전트 실행**
+\`\`\`
+탐색 내용을 바탕으로 PRD 초안을 작성해주세요.
+
+추가 컨텍스트:
+- 이번 스프린트 여유 개발 시간: 개발자 1명 x 1주
+- 우선 필요한 건: 푸시 알림 1개 (이메일은 다음으로)
+- 찜한 상품이 100개 이상인 사용자 많음 (알림 피로도 주의)
+\`\`\`
+
+---
+
+#### 월요일 오후 (20분): 검토 & 완성
+
+**Step 5: 검토 에이전트 실행**
+\`\`\`
+이 PRD를 두 관점에서 검토해주세요:
+
+[iOS 개발자]:
+"이대로 개발 시작하면 뭘 더 물어봐야 하나?"
+
+[찜을 100개 이상 한 헤비 유저]:
+"이 알림을 받으면 좋겠는가, 귀찮은가?"
+\`\`\`
+
+**Step 6: 최종 완성**
+\`\`\`
+검토 결과 반영해서 최종 버전 만들어주세요.
+특히 알림 피로도 관련 설정 옵션 섹션을 보강해주세요.
+\`\`\`
+
+**Step 7: 내 최종 검토 후 팀 공유**
+
+---
+
+**총 소요 시간**: 약 70분  
+**결과물**: 팀에 바로 공유 가능한 PRD 1개
+
+---
+
+## 최종 체크리스트: 초보 PO를 위한 Claude 활용 10계명
+
+커리큘럼을 마치며, 앞으로 기억해야 할 것들입니다.
+
+\`\`\`
+✅ 1. Soul Document를 만들고 꾸준히 업데이트한다
+      → 한 번 잘 만들어두면 매번 설명이 필요 없다
+
+✅ 2. 한 번에 다 요구하지 않는다 — 탐색 먼저
+      → 첫 요청은 항상 "탐색"이나 "구조 제안"으로 시작
+
+✅ 3. 결과물 생성 전 컨텍스트를 충분히 쌓는다
+      → 20분 대화가 2시간 수정을 막는다
+
+✅ 4. 초안이 나오면 바로 다각도 검토를 요청한다
+      → 개발자 / 사용자 / 비즈니스 세 관점은 필수
+
+✅ 5. 에이전트에게 자기 결과물을 비판하게 만든다
+      → "이 PRD의 가장 큰 문제 3가지 찾아주세요"
+
+✅ 6. 반복 업무는 Command로 만들어 자동화한다
+      → 두 번 이상 같은 설명을 했다면 Command 만들 때
+
+✅ 7. 긴 작업은 PROGRESS.md로 중간 저장한다
+      → 내일 새 대화에서도 이어받을 수 있다
+
+✅ 8. 최종 판단은 항상 내가 한다
+      → Claude는 초안과 검토를 돕는 도구, 결정은 PO가
+
+✅ 9. 효과적인 프롬프트는 반드시 기록해둔다
+      → Command 파일에 저장, 다음에도 재사용
+
+✅ 10. 안 되는 게 있으면 2주 후에 다시 시도한다
+       → Claude가 빠르게 발전 중, 안 됐던 것도 곧 된다
+\`\`\`
+
+---
+
+## ✏️ Final Project: 실제 PRD 1개 완성하기
+
+**목표**: 이 커리큘럼에서 배운 모든 것을 적용해서 실제 PRD 1개 완성
+
+### 조건
+
+\`\`\`
+□ 자신의 현재 프로젝트에서 가장 중요한 기능 선택
+□ Soul Document를 대화 첫머리에 활용
+□ 탐색 → 초안 → 검토 → 개선 4단계 에이전트 플로우
+□ 개발자 / 사용자 / 비즈니스 3관점 검토 완료
+□ 엣지케이스 섹션 포함 (최소 5개)
+□ Open Questions 섹션에 미결 사항 기록
+□ 총 소요 시간 90분 이내 목표
+\`\`\`
+
+### 완성 후 제출물
+
+\`\`\`
+1. 완성된 PRD 파일
+2. 사용한 주요 프롬프트 3개 (가장 효과적이었던 것)
+3. 학습 회고:
+   - 잘 됐던 것
+   - 어려웠던 것
+   - 다음에 개선할 것
+   - Claude 없이 했을 때와 비교해서 어떻게 달랐나?
+\`\`\`
+
+---
+
+## 이 커리큘럼을 마치며
+
+이 말로 마무리합니다.
+
+글쓰기가 두려운 개발자가 Claude를 통해서 글 쓰는 법을 익혔더니, 이후 유사한 글쓰기 기능을 3분 안에 처리할 수 있게 됐습니다. 가속 곡선에 올라탄 겁니다.
+
+Claude는 코딩에 특화될 수 있도록 긴 텍스트 내의 context를 이해하고 처리하기에 좋게 설계(Prompting) 되었습니다.
+
+그렇게 긴 context를 읽고 이해하는 영역이 활성화 되고 학습 되다보니, 자연스럽게 글을 쓰는 것에도 특출나게 되었어요.
+
+글을 써서 상대방을 설득하고 이해시키고 납득 시켜야 하는 여러분들에게 꼭 필요한 도구가 아닌가 싶습니다.
+
+아직 늦지 않았어요. 이제 시작이고, 더 잘할 수 있습니다.
+
+**진짜 가속은, 나만의 시스템을 만드는 순간 시작됩니다.**
+
+---
+
+## 다음 단계 (커리큘럼 이후)
+
+이 커리큘럼을 마쳤다면, 다음을 해보세요:
+
+\`\`\`
+1. [즉시] 오늘 배운 것 중 가장 중요한 것 1가지를 내일 업무에 적용
+2. [이번 주] 반복 업무 1가지를 Command로 만들기
+3. [이번 달] Soul Document 3회 이상 업데이트
+4. [3개월 후] Command 5개 이상 갖춘 나만의 PO Toolkit 완성
+5. [언제나] 안 되는 게 있으면 2주 후에 다시 시도
+\`\`\`
+
+---
+
+[← 7강으로](07_agentic.html) | [목차로](index.html) | [부록 프롬프트 →](appendix_prompts.html)
+`;
+  document.getElementById('content').innerHTML = marked.parse(md);
+
+  // Syntax highlight all code blocks
+  document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+  // Mobile menu
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('overlay');
+  const menuBtn  = document.getElementById('menuBtn');
+  menuBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+</script>
+</body>
+</html>
