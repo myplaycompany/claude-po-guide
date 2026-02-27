@@ -114,7 +114,7 @@ def generate_html(md_content, title, output_path):
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title} — AI PO Study</title>
+  <title>{title} — Claude PO Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -375,7 +375,7 @@ def generate_html(md_content, title, output_path):
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <a href="{home_href}">📚 AI PO Study<span>초보 PO를 위한 Claude 활용 커리큘럼</span></a>
+    <a href="{home_href}">📚 Claude PO Guide<span>초보 PO를 위한 Claude 활용 커리큘럼</span></a>
   </div>
   <nav>
     <ul>
